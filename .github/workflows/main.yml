@@ -1,0 +1,33 @@
+name: Build SeaBIOS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout SeaBIOS
+      uses: actions/checkout@v3
+      with:
+        repository: coreboot/seabios
+        ref: rel-1.16.3
+
+    - name: Set up build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential git
+
+    - name: Build SeaBIOS
+      run: |
+        cd seabios
+        make
+
+    - name: Upload BIOS binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: seabios-binary
+        path: seabios/out/seabios.bin
